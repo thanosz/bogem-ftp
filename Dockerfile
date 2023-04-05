@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 
 RUN apt-get update && \
 		apt-get install -y --no-install-recommends vsftpd db-util && \
@@ -8,9 +8,9 @@ ENV FTP_USER admin
 ENV FTP_PASS admin
 ENV PASV_ADDRESS REQUIRED
 
-COPY ftp/vsftpd.conf /etc/vsftpd/
-COPY ftp/vsftpd_virtual /etc/pam.d/
-COPY ftp/run-vsftpd.sh /usr/sbin/
+COPY vsftpd.conf /etc/vsftpd/
+COPY vsftpd_virtual /etc/pam.d/
+COPY run-vsftpd.sh /usr/sbin/
 
 RUN chmod +x /usr/sbin/run-vsftpd.sh && \
 		mkdir -p /var/run/vsftpd/empty

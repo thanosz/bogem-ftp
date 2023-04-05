@@ -1,0 +1,130 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ftp-server
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: claim-ftp
+  namespace: ftp-server
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ftp-server
+  namespace: ftp-server
+  labels:
+    app: ftp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ftp-server
+  template:
+    metadata:
+      labels:
+        app: ftp-server
+    spec:
+      hostNetwork: true # Required for ACTIVE mode, otherwise use service for all ports
+      containers:
+        - args:
+            - /usr/sbin/run-vsftpd.sh
+          env:
+            - name: FTP_USER
+              value: ftp_user
+            - name: FTP_PASS
+              value: $changeme=
+            - name: PASV_ADDRESS
+              value: $changeme=
+            - name: PASV_MIN_PORT
+              value: "31400"
+            - name: PASV_MAX_PORT
+              value: "31410"
+            - name: PATH
+              value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+          image: docker.io/thanosz/ftp-server
+          name: ftp
+          ports:
+            #- containerPort: 20
+              #hostPort: 20
+            #- containerPort: 21
+              #hostPort: 21
+            #- containerPort: 31400
+            #- containerPort: 31401
+            #- containerPort: 31402
+            #- containerPort: 31403
+            #- containerPort: 31404
+            #- containerPort: 31405
+            #- containerPort: 31406
+            #- containerPort: 31407
+            #- containerPort: 31408
+            #- containerPort: 31409
+            #- containerPort: 31410
+          resources: {}
+          volumeMounts:
+            - mountPath: /home/vsftpd
+              name: ftp
+      restartPolicy: Always
+      volumes:
+        - name: ftp
+          persistentVolumeClaim:
+            claimName: claim-ftp
+
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: ftp-server-lb
+#  namespace: ftp-server
+#  labels:
+#    app: ftp-server
+#spec:
+#  selector:
+#    app: ftp-server
+#  type: LoadBalancer
+#  ports:
+#    - name: "31400"
+#      port: 31400
+#      nodePort: 31400
+#    - name: "31401"
+#      port: 31401
+#      nodePort: 31401
+#    - name: "31402"
+#      port: 31402
+#      nodePort: 31402
+#    - name: "31403"
+#      port: 31403
+#      nodePort: 31403
+#    - name: "31404"
+#      port: 31404
+#      nodePort: 31404
+#    - name: "31405"
+#      port: 31405
+#      nodePort: 31405
+#    - name: "31406"
+#      port: 31406
+#      nodePort: 31406
+#    - name: "31407"
+#      port: 31407
+#      nodePort: 31407
+#    - name: "31408"
+#      port: 31408
+#      nodePort: 31408
+#    - name: "31409"
+#      port: 31409
+#      nodePort: 31409
+#    - name: "31410"
+#      port: 31410
+#      nodePort: 31410
+
+
