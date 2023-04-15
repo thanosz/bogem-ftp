@@ -21,4 +21,4 @@ sed -i "s/_MIN_PORT_/${PASV_MIN_PORT}/g" /etc/vsftpd/vsftpd.conf
 sed -i "s/_MAX_PORT_/${PASV_MAX_PORT}/g" /etc/vsftpd/vsftpd.conf
 
 # Run vsftpd:
-vsftpd /etc/vsftpd/vsftpd.conf
+exec vsftpd /etc/vsftpd/vsftpd.conf
